@@ -8,6 +8,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "AbilitySystemComponent.h"
+#include "ACM_AttributeSet.h"
+#include "ACM_GameplayAbility.h"
+#include "ArkdeCM/ArkdeCM.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AArkdeCMCharacter
@@ -45,8 +49,46 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
+	AttributeSet = CreateDefaultSubobject<UACM_AttributeSet>(TEXT("Attribute Set"));
+		
+
+
 }
 
+//===========================================================================================================================================================
+void AArkdeCMCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsValid(AbilitySystemComponent))
+	{
+		for (TSubclassOf<UACM_GameplayAbility>& currentAbility : StartingAbilities)
+		{
+			if (IsValid(currentAbility))
+			{
+				UACM_GameplayAbility* defaultObj = currentAbility->GetDefaultObject<UACM_GameplayAbility>();
+				FGameplayAbilitySpec abilitySpec(defaultObj, 1, static_cast<int32>(defaultObj->AbilityInputID), this);
+				AbilitySystemComponent->GiveAbility(abilitySpec);
+			}
+		}
+
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	if (IsValid(AbilitySystemComponent))
+	{
+		AbilitySystemComponent->RefreshAbilityActorInfo();
+	}
+}
+
+//===========================================================================================================================================================
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -74,36 +116,60 @@ void AArkdeCMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AArkdeCMCharacter::OnResetVR);
+
+	// Setup ASC Input bindings
+	AbilitySystemComponent->BindAbilityActivationToInputComponent
+	(
+		PlayerInputComponent,
+		FGameplayAbilityInputBinds(
+			"Confirm",
+			"Cancel",
+			"EACM_AbilityInputID",
+			static_cast<int32>(EACM_AbilityInputID::Confirm),
+			static_cast<int32>(EACM_AbilityInputID::Cancel)
+		)
+	);
 }
 
+//===========================================================================================================================================================
+UAbilitySystemComponent* AArkdeCMCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
 		Jump();
 }
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 		StopJumping();
 }
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
@@ -118,6 +184,7 @@ void AArkdeCMCharacter::MoveForward(float Value)
 	}
 }
 
+//===========================================================================================================================================================
 void AArkdeCMCharacter::MoveRight(float Value)
 {
 	if ( (Controller != NULL) && (Value != 0.0f) )
