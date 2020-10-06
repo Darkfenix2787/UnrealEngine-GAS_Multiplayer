@@ -37,8 +37,7 @@ void UACM_AttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	else if (Attribute == GetMaxStaminaAttribute())
 	{
 		AdjustAttributeForMaxChange(Stamina, MaxStamina, NewValue, GetStaminaAttribute());
-	}
-	
+	}	
 }
 
 //===========================================================================================================================================================
