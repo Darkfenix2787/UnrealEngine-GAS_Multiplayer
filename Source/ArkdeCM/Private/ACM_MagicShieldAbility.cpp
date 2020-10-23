@@ -33,8 +33,7 @@ void UACM_MagicShieldAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 				if (IsValid(NewShield))
 				{
 					FAttachmentTransformRules AttachTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-					NewShield->AttachToComponent(OwnerCharacter->GetMesh(), AttachTransformRules, SocketName);
-					//GetWorld()->GetTimerManager().SetTimer(TimerHandle_DestroyMagicShield, &UACM_MagicShieldAbility::MagicShieldDestroy, MagicShieldTime,false);					
+					NewShield->AttachToComponent(OwnerCharacter->GetMesh(), AttachTransformRules, SocketName);					
 				}
 				
 				EndAbility(Handle, ActorInfo, ActivationInfo, true, true);				
