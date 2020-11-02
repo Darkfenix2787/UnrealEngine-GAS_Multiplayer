@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ACM_Shield.generated.h"
 
-class USphereComponent;
+class UBoxComponent;
 class UParticleSystemComponent;
 
 UCLASS()
@@ -21,10 +21,13 @@ public:
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		USphereComponent* SphereComponent;
+		UBoxComponent* BoxComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		UParticleSystemComponent* ParticleSystemComponent;
+		UParticleSystemComponent* ParticleSystemComponent_P01;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+		UParticleSystemComponent* ParticleSystemComponent_P02;
 
 protected:
 	// Called when the game starts or when spawned
