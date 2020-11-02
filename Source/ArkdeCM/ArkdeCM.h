@@ -19,9 +19,11 @@ enum class EACM_AbilityInputID : uint8
 	Ability2 UMETA(DisplayName = "Ability2"),
 	// 5 Ability3
 	Ability3 UMETA(DisplayName = "Ability3"),
-	// 6 Sprint
+	// 6 Ability4
+	Ability4 UMETA(DisplayName = "Ability4"),
+	// 7 Sprint
 	Sprint UMETA(DisplayName = "Sprint"),
-	// 7 Jump
+	// 8 Jump
 	Jump UMETA(DisplayName = "Jump"),
 	
 };
