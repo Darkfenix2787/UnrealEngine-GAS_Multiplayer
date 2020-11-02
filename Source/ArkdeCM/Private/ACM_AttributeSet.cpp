@@ -53,8 +53,7 @@ void UACM_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UACM_AttributeSet::StaticClass(), GET_MEMBER_NAME_CHECKED(UACM_AttributeSet, Mana)))
 	{
 		Mana.SetCurrentValue(FMath::Clamp(Mana.GetCurrentValue(), 0.f, MaxMana.GetCurrentValue()));
-		Mana.SetBaseValue(FMath::Clamp(Mana.GetBaseValue(), 0.f, MaxMana.GetCurrentValue()));
-		UE_LOG(LogTemp, Warning, TEXT("Mana Changed: %f"), Mana.GetCurrentValue());
+		Mana.SetBaseValue(FMath::Clamp(Mana.GetBaseValue(), 0.f, MaxMana.GetCurrentValue()));		
 	}
 	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UACM_AttributeSet::StaticClass(), GET_MEMBER_NAME_CHECKED(UACM_AttributeSet, Stamina)))
 	{
