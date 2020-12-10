@@ -5,7 +5,9 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "ArkdeCM/ArkdeCMCharacter.h"
 
+//==================================================================================================================//
 // Sets default values
 AACM_Projectile::AACM_Projectile()
 {
@@ -21,13 +23,14 @@ AACM_Projectile::AACM_Projectile()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Component"));
 }
 
+//==================================================================================================================//
 // Called when the game starts or when spawned
 void AACM_Projectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
+//==================================================================================================================//
 // Called every frame
 void AACM_Projectile::Tick(float DeltaTime)
 {
@@ -35,3 +38,14 @@ void AACM_Projectile::Tick(float DeltaTime)
 
 }
 
+//==================================================================================================================//
+void AACM_Projectile::Multicast_IgnoreActor_Implementation(AArkdeCMCharacter* ActorToIgnore)
+{
+	SphereComponent->IgnoreActorWhenMoving(ActorToIgnore,true);
+}
+
+//==================================================================================================================//
+bool AACM_Projectile::Multicast_IgnoreActor_Validate(AArkdeCMCharacter* ActorToIgnore)
+{
+	return true;
+}

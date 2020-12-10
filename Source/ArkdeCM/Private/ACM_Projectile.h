@@ -9,6 +9,7 @@
 class UProjectileMovementComponent;
 class USphereComponent;
 class UParticleSystemComponent;
+class AArkdeCMCharacter;
 
 UCLASS()
 class AACM_Projectile : public AActor
@@ -30,6 +31,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		UParticleSystemComponent* ParticleSystemComponent;
 
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float Range;
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,5 +43,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(NetMulticast, WithValidation, Reliable)
+		void Multicast_IgnoreActor(AArkdeCMCharacter* ActorToIgnore);
 
 };

@@ -10,6 +10,7 @@
 class UAbilitySystemComponent;
 class UACM_AttributeSet;
 class UACM_GameplayAbility;
+class UGameplayEffect;
 
 UCLASS(config=Game)
 class AArkdeCMCharacter : public ACharacter, public IAbilitySystemInterface
@@ -26,17 +27,15 @@ class AArkdeCMCharacter : public ACharacter, public IAbilitySystemInterface
 public:
 	AArkdeCMCharacter();
 
-	virtual void BeginPlay() override;
-
-	virtual void PossessedBy(AController* NewController) override;
+	virtual void BeginPlay() override;	
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseLookUpRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseLookUpRate;
 
 protected:
 
@@ -85,6 +84,12 @@ public:
 
 public:
 
+	bool IsInputBound;
+
+	bool IsAbilitiesGiven;
+
+	bool IsEffectsGiven;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay Ability System")
 		UAbilitySystemComponent* AbilitySystemComponent;
 
@@ -94,13 +99,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TArray<TSubclassOf<UACM_GameplayAbility>> StartingAbilities;
 
-public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
+		TArray<TSubclassOf<UGameplayEffect>> StartingEffect;
+
+public:	
+
+	void SetUpGasInputs();
+
+	void SetUpAbilities();
+
+	void SetUpEffects();	
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void OnRep_PlayerState() override;
+
 
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Ability System")
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-
 	/* ---- Gameplay Ability System End ---- */
+
+	virtual void Die();
 
 
 #pragma endregion
