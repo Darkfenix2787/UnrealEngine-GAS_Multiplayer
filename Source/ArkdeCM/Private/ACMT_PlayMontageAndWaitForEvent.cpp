@@ -52,7 +52,8 @@ void UACMT_PlayMontageAndWaitForEvent::Activate()
 				{
 					character->SetAnimRootMotionTranslationScale(AnimRootMotionTranslationScale);
 				}
-				
+
+				bPlayerMontage = true;
 			}
 		}
 	}

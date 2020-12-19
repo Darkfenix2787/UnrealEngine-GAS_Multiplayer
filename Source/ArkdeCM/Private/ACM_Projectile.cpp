@@ -11,12 +11,12 @@
 // Sets default values
 AACM_Projectile::AACM_Projectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Component"));
 	RootComponent = SphereComponent;
-	
+
 	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle System Component"));
 	ParticleSystemComponent->SetupAttachment(RootComponent);
 
@@ -38,10 +38,15 @@ void AACM_Projectile::Tick(float DeltaTime)
 
 }
 
+void AACM_Projectile::SetProjectileInitialSpeed(float initialSpeed)
+{
+	ProjectileMovementComponent->InitialSpeed = initialSpeed;
+}
+
 //==================================================================================================================//
 void AACM_Projectile::Multicast_IgnoreActor_Implementation(AArkdeCMCharacter* ActorToIgnore)
 {
-	SphereComponent->IgnoreActorWhenMoving(ActorToIgnore,true);
+	SphereComponent->IgnoreActorWhenMoving(ActorToIgnore, true);
 }
 
 //==================================================================================================================//

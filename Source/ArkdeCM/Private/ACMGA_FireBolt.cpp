@@ -8,6 +8,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 
 
@@ -55,9 +56,8 @@ void UACMGA_FireBolt::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventDa
 
 //==================================================================================================================//
 void UACMGA_FireBolt::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	ENetRole Role = GetOwningActorFromActorInfo()->GetLocalRole();
-	if (GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_Authority && EventTag == ProjectileSpawnTag)
+{	
+	if (GetOwningActorFromActorInfo()->GetLocalRole() == ROLE_Authority && EventTag == ProjectileSpawnTag)
 	{
 		AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(GetAvatarActorFromActorInfo());
 		if (!IsValid(character))
@@ -75,9 +75,11 @@ void UACMGA_FireBolt::EventReceived(FGameplayTag EventTag, FGameplayEventData Ev
 		FActorSpawnParameters spawnParams;
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AACM_Projectile* fireBolt = GetWorld()->SpawnActorDeferred<AACM_Projectile>(ProjectileClass, spawnTransform, GetOwningActorFromActorInfo(), character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		fireBolt->Multicast_IgnoreActor(character);
-		fireBolt->Range = ProjectileRange;
+		AACM_Projectile* fireBolt = GetWorld()->SpawnActorDeferred<AACM_Projectile>(ProjectileClass, spawnTransform, GetOwningActorFromActorInfo(), character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);		
+		fireBolt->Multicast_IgnoreActor(character);		
+		fireBolt->Range = ProjectileRange;		
+		fireBolt->SetProjectileInitialSpeed(ProjectileSpeed);
 		fireBolt->FinishSpawning(spawnTransform);
+		
 	}
 }

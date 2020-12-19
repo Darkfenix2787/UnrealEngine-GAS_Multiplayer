@@ -34,18 +34,19 @@ public:
 
 	UACM_AttributeSet* GetAttributeSet() const;
 	
-	virtual void BeginPlay() override;
-
-	FDelegateHandle HealthChangeDelegateHandle;
+	virtual void BeginPlay() override;	
 
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);	
 
 public:
+
 	UPROPERTY()
 		UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY()
-		UACM_AttributeSet* AttributeSet;
+		UACM_AttributeSet* StateAttributeSet;	
+
+	FDelegateHandle HealthChangeDelegateHandle;
 
 	
 

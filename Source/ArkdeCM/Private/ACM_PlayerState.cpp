@@ -14,14 +14,14 @@ AACM_PlayerState::AACM_PlayerState()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
 
-	AttributeSet = CreateDefaultSubobject<UACM_AttributeSet>(TEXT("AttribUte Set"));
+	StateAttributeSet = CreateDefaultSubobject<UACM_AttributeSet>(TEXT("Attribute Set"));
 
 	NetUpdateFrequency = 100.0f;
 }
 
 //==================================================================================================================//
 bool AACM_PlayerState::IsAlive() const
-{
+{	
 	return GetHealth() > 0.f;
 }
 
@@ -52,7 +52,7 @@ UAbilitySystemComponent* AACM_PlayerState::GetAbilitySystemComponent() const
 //==================================================================================================================//
 UACM_AttributeSet* AACM_PlayerState::GetAttributeSet() const
 {
-	return AttributeSet;
+	return StateAttributeSet;
 }
 
 //==================================================================================================================//
@@ -61,7 +61,7 @@ void AACM_PlayerState::BeginPlay()
 	Super::BeginPlay();
 
 	if (IsValid(AbilitySystemComponent))
-	{
+	{		
 		//CallBack Attribute Change
 		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetAttributeSet()->GetHealthAttribute()).AddUObject(this, &AACM_PlayerState::OnHealthChanged);
 	}
@@ -71,7 +71,7 @@ void AACM_PlayerState::BeginPlay()
 void AACM_PlayerState::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if (!IsAlive() && IsValid(AbilitySystemComponent))
-	{
+	{		
 		AArkdeCMCharacter* characterRef = Cast<AArkdeCMCharacter>(GetPawn());
 		if (IsValid(characterRef))
 		{
