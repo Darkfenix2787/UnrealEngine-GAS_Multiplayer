@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ACM_GameplayAbility.h"
+#include "Abilities/Core/ACM_GameplayAbility.h"
 
 UACM_GameplayAbility::UACM_GameplayAbility()
 {

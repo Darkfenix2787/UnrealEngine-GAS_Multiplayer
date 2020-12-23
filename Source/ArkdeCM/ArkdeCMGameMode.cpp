@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ArkdeCMGameMode.h"
-#include "ArkdeCMCharacter.h"
+#include "Character/ArkdeCMCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AArkdeCMGameMode::AArkdeCMGameMode()

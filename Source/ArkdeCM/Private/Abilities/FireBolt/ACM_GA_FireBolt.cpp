@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ACMGA_FireBolt.h"
-#include "ArkdeCM/ArkdeCMCharacter.h"
-#include "ACMT_PlayMontageAndWaitForEvent.h"
-#include "ACM_Projectile.h"
+#include "Abilities/FireBolt/ACM_GA_FireBolt.h"
+#include "Character/ArkdeCMCharacter.h"
+#include "Abilities/Core/ACMT_PlayMontageAndWaitForEvent.h"
+#include "Abilities/FireBolt/ACM_Projectile.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -13,7 +13,7 @@
 
 
 //==================================================================================================================//
-void UACMGA_FireBolt::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UACM_GA_FireBolt::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
 	{
@@ -32,31 +32,31 @@ void UACMGA_FireBolt::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 		1.f
 	);
 
-	montageTask->OnBlendOut.AddDynamic(this, &UACMGA_FireBolt::OnMontageCompleted);
-	montageTask->OnComplete.AddDynamic(this, &UACMGA_FireBolt::OnMontageCompleted);
-	montageTask->OnInterrupted.AddDynamic(this, &UACMGA_FireBolt::OnMontageCancelled);
-	montageTask->OnCancelled.AddDynamic(this, &UACMGA_FireBolt::OnMontageCancelled);
-	montageTask->OnEventReceived.AddDynamic(this, &UACMGA_FireBolt::EventReceived);
+	montageTask->OnBlendOut.AddDynamic(this, &UACM_GA_FireBolt::OnMontageCompleted);
+	montageTask->OnComplete.AddDynamic(this, &UACM_GA_FireBolt::OnMontageCompleted);
+	montageTask->OnInterrupted.AddDynamic(this, &UACM_GA_FireBolt::OnMontageCancelled);
+	montageTask->OnCancelled.AddDynamic(this, &UACM_GA_FireBolt::OnMontageCancelled);
+	montageTask->OnEventReceived.AddDynamic(this, &UACM_GA_FireBolt::EventReceived);
 
 	montageTask->ReadyForActivation();
 
 }
 
 //==================================================================================================================//
-void UACMGA_FireBolt::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+void UACM_GA_FireBolt::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 //==================================================================================================================//
-void UACMGA_FireBolt::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UACM_GA_FireBolt::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 //==================================================================================================================//
-void UACMGA_FireBolt::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
-{	
+void UACM_GA_FireBolt::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+{
 	if (GetOwningActorFromActorInfo()->GetLocalRole() == ROLE_Authority && EventTag == ProjectileSpawnTag)
 	{
 		AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(GetAvatarActorFromActorInfo());
@@ -75,11 +75,13 @@ void UACMGA_FireBolt::EventReceived(FGameplayTag EventTag, FGameplayEventData Ev
 		FActorSpawnParameters spawnParams;
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AACM_Projectile* fireBolt = GetWorld()->SpawnActorDeferred<AACM_Projectile>(ProjectileClass, spawnTransform, GetOwningActorFromActorInfo(), character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);		
-		fireBolt->Multicast_IgnoreActor(character);		
-		fireBolt->Range = ProjectileRange;		
+		AACM_Projectile* fireBolt = GetWorld()->SpawnActorDeferred<AACM_Projectile>(ProjectileClass, spawnTransform, GetOwningActorFromActorInfo(), character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		fireBolt->Multicast_IgnoreActor(character);
+		fireBolt->Range = ProjectileRange;
 		fireBolt->SetProjectileInitialSpeed(ProjectileSpeed);
 		fireBolt->FinishSpawning(spawnTransform);
-		
+
 	}
 }
+
+

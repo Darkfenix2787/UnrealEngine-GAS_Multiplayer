@@ -3,39 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ACM_GameplayAbility.h"
-#include "ACMGA_FireBolt.generated.h"
+#include "Abilities/Core/ACM_GameplayAbility.h"
+#include "ACM_GA_WindSwirl.generated.h"
 
 class UAnimMontage;
-class AACM_Projectile;
-
+class AACM_WindSphere;
 /**
- *
+ * 
  */
 UCLASS()
-class ARKDECM_API UACMGA_FireBolt : public UACM_GameplayAbility
+class ARKDECM_API UACM_GA_WindSwirl : public UACM_GameplayAbility
 {
 	GENERATED_BODY()
+	
 
 public:
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		float ProjectileSpeed;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		float ProjectileRange;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		UAnimMontage* CastMontage;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		TSubclassOf<AACM_Projectile> ProjectileClass;
+		TSubclassOf<AACM_WindSphere> WindSphereClass;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		FGameplayTag ProjectileSpawnTag;
+		FGameplayTag WindSphereSpawnTag;	
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		FName AbilitySocketName;
 
 public:
 
@@ -51,5 +43,6 @@ protected:
 
 	UFUNCTION()
 		void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
+
 
 };

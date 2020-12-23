@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ACM_Projectile.h"
+#include "Abilities/FireBolt/ACM_Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "ArkdeCM/ArkdeCMCharacter.h"
+#include "Character/ArkdeCMCharacter.h"
 
 //==================================================================================================================//
 // Sets default values

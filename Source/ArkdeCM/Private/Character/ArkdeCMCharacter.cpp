@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ArkdeCMCharacter.h"
+#include "Character/ArkdeCMCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -9,10 +9,10 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemComponent.h"
-#include "ACM_AttributeSet.h"
-#include "ACM_GameplayAbility.h"
+#include "Abilities/Core/ACM_AttributeSet.h"
+#include "Abilities/Core/ACM_GameplayAbility.h"
 #include "ArkdeCM/ArkdeCM.h"
-#include "ArkdeCM/Public/ACM_PlayerState.h"
+#include "Abilities/Core/ACM_PlayerState.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AArkdeCMCharacter
@@ -130,9 +130,7 @@ void AArkdeCMCharacter::SetUpEffects()
 		
 		}
 	}
-
 	IsEffectsGiven = true;
-
 }
 
 //===========================================================================================================================================================
