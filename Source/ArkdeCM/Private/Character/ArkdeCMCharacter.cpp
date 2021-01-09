@@ -13,6 +13,10 @@
 #include "Abilities/Core/ACM_GameplayAbility.h"
 #include "ArkdeCM/ArkdeCM.h"
 #include "Abilities/Core/ACM_PlayerState.h"
+#include "Components/SphereComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AArkdeCMCharacter
@@ -25,6 +29,8 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
+
+	MeleeSocketName = "AbilityLeftSocket";
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -48,6 +54,20 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+
+	MeeleSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("MeleeDetectorComponent"));
+	MeeleSphereComponent->SetupAttachment(GetMesh(), MeleeSocketName);
+	MeeleSphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	MeeleSphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
+	MeeleParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle System Component"));
+	MeeleParticle->bAutoActivate = false;		
+	MeeleParticle->SetupAttachment(MeeleSphereComponent);
+
+
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
@@ -62,6 +82,7 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 void AArkdeCMCharacter::BeginPlay()
 {
 	Super::BeginPlay();	
+	MeeleSphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AArkdeCMCharacter::SphereComponentBeginOverlap);
 }
 
 //===========================================================================================================================================================//
@@ -126,8 +147,7 @@ void AArkdeCMCharacter::SetUpEffects()
 			if (newHandle.IsValid())
 			{
 				FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*newHandle.Data.Get(), GetAbilitySystemComponent());
-			}
-		
+			}		
 		}
 	}
 	IsEffectsGiven = true;
@@ -197,6 +217,42 @@ void AArkdeCMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 UAbilitySystemComponent* AArkdeCMCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (IsValid(OtherActor))
+	{
+		if (OtherActor == this)
+		{
+			return;
+		}
+
+		AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(OtherActor);
+		if (IsValid(character))
+		{
+			MeeleParticle->SetActive(true);
+
+			if (GetLocalRole() != ROLE_Authority && !IsValid(AbilitySystemComponent))
+			{
+				return;
+			}
+
+			FGameplayEffectContextHandle effectContext = AbilitySystemComponent->MakeEffectContext();
+			effectContext.AddSourceObject(this);
+
+			if (IsValid(AddHealthEffect))
+			{
+				FGameplayEffectSpecHandle newHandle = AbilitySystemComponent->MakeOutgoingSpec(AddHealthEffect, 1.f, effectContext);
+				if (newHandle.IsValid() && IsValid(ShockingGraspSound))
+				{
+					FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*newHandle.Data.Get());
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShockingGraspSound, this->GetActorLocation());
+				}
+			}
+		}
+	}
 }
 
 //===========================================================================================================================================================// 

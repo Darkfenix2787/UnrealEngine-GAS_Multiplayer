@@ -35,7 +35,6 @@ void AACM_Projectile::BeginPlay()
 void AACM_Projectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AACM_Projectile::SetProjectileInitialSpeed(float initialSpeed)

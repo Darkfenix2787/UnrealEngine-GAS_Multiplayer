@@ -59,9 +59,7 @@ void UACM_GA_WindSwirl::EventReceived(FGameplayTag EventTag, FGameplayEventData 
 		if (!IsValid(character))
 		{
 			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		}
-
-		character->GetMesh()->
+		}	
 
 		FTransform spawnTransform = character->GetActorTransform(); //GetMesh()->GetSocketTransform(AbilitySocketName);
 

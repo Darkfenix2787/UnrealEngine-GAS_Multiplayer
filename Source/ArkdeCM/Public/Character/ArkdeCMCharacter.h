@@ -11,6 +11,9 @@ class UAbilitySystemComponent;
 class UACM_AttributeSet;
 class UACM_GameplayAbility;
 class UGameplayEffect;
+class USphereComponent;
+class UParticleSystemComponent;
+class USoundCue;
 
 UCLASS(config=Game)
 class AArkdeCMCharacter : public ACharacter, public IAbilitySystemInterface
@@ -91,17 +94,34 @@ public:
 
 	bool IsEffectsGiven;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Melee")
+		FName MeleeSocketName;
+
+public:
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay Ability System")
 		UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay Ability System")
 		UACM_AttributeSet* AttributeSet;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+		USphereComponent* MeeleSphereComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particles")
+		UParticleSystemComponent* MeeleParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
+		USoundCue* ShockingGraspSound;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TArray<TSubclassOf<UACM_GameplayAbility>> StartingAbilities;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TArray<TSubclassOf<UGameplayEffect>> StartingEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
+		TSubclassOf<UGameplayEffect> AddHealthEffect;
 
 public:	
 
@@ -119,7 +139,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Ability System")
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	/* ---- Gameplay Ability System End ---- */
+	UFUNCTION()
+		void SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);	
 
 	virtual void Die();
 
