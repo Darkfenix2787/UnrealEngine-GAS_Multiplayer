@@ -54,20 +54,6 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-
-	MeeleSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("MeleeDetectorComponent"));
-	MeeleSphereComponent->SetupAttachment(GetMesh(), MeleeSocketName);
-	MeeleSphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	MeeleSphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
-	MeeleParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle System Component"));
-	MeeleParticle->bAutoActivate = false;		
-	MeeleParticle->SetupAttachment(MeeleSphereComponent);
-
-
-
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
@@ -81,9 +67,7 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 //===========================================================================================================================================================//
 void AArkdeCMCharacter::BeginPlay()
 {
-	Super::BeginPlay();	
-	MeeleSphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AArkdeCMCharacter::SphereComponentBeginOverlap);
-	MeeleSphereComponent->OnComponentEndOverlap.AddDynamic(this, &AArkdeCMCharacter::SphereComponentEndOverlap);
+	Super::BeginPlay();		
 }
 
 //===========================================================================================================================================================//
@@ -220,77 +204,9 @@ UAbilitySystemComponent* AArkdeCMCharacter::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-//===========================================================================================================================================================
-void AArkdeCMCharacter::SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{	
-	if (IsValid(OtherActor))
-	{
-		if (OtherActor == this)
-		{
-			return;
-		}
-
-		AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(OtherActor);
-		if (IsValid(character))
-		{
-			if (GetLocalRole() != ROLE_Authority && !IsValid(AbilitySystemComponent))
-			{
-				return;
-			}
-
-			FGameplayEffectContextHandle effectContext = AbilitySystemComponent->MakeEffectContext();
-			effectContext.AddSourceObject(this);
-
-			if (IsValid(AddHealthEffect))
-			{
-				FGameplayEffectSpecHandle newHandle = AbilitySystemComponent->MakeOutgoingSpec(AddHealthEffect, 1.f, effectContext);
-				if (newHandle.IsValid() && IsValid(ShockingGraspSound))
-				{
-					FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*newHandle.Data.Get());					
-					Multicast_ParticleActivation(true);
-				}
-			}
-		}
-	}
-}
-
-//===========================================================================================================================================================// 
-void AArkdeCMCharacter::SphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (IsValid(OtherActor))
-	{
-		if (OtherActor == this)
-		{
-			return;
-		}
-
-		Multicast_ParticleActivation(false);
-	}
-}
-
 //===========================================================================================================================================================// 
 void AArkdeCMCharacter::Die()
 {
-}
-
-
-//===========================================================================================================================================================// 
-void AArkdeCMCharacter::Multicast_ParticleActivation_Implementation(bool bIsActive)
-{
-	if (IsValid(MeeleParticle) && IsValid(ShockingGraspSound))
-	{
-		MeeleParticle->SetActive(bIsActive);
-		if (bIsActive)
-		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShockingGraspSound, this->GetActorLocation());
-		}
-	}
-}
-
-//===========================================================================================================================================================// 
-bool AArkdeCMCharacter::Multicast_ParticleActivation_Validate(bool bIsActive)
-{
-	return true;
 }
 
 //===========================================================================================================================================================

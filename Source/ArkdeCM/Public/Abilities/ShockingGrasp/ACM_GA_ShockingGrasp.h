@@ -7,6 +7,7 @@
 #include "ACM_GA_ShockingGrasp.generated.h"
 
 class AArkdeCMCharacter;
+class AACM_AbsorptionSphere;
 
 /**
  * 
@@ -26,6 +27,16 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FGameplayTag DisableCollisionTag;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		TSubclassOf<AACM_AbsorptionSphere> AbsorptionSphereClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		FName AbilitySocketName;
+
+	UPROPERTY(BlueprintReadOnly)
+		AACM_AbsorptionSphere* AbsorptionSphere;
+
 
 public:
 

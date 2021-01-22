@@ -27,7 +27,7 @@ AACM_Projectile::AACM_Projectile()
 // Called when the game starts or when spawned
 void AACM_Projectile::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay();	
 }
 
 //==================================================================================================================//

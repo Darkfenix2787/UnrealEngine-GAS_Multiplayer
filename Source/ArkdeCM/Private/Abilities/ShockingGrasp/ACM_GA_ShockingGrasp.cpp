@@ -5,6 +5,9 @@
 #include "Abilities/Core/ACMT_PlayMontageAndWaitForEvent.h"
 #include "Character/ArkdeCMCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Abilities/ShockingGrasp/ACM_AbsorptionSphere.h"
+#include "Components/SphereComponent.h"
+
 
 //==================================================================================================================//
 void UACM_GA_ShockingGrasp::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -51,19 +54,33 @@ void UACM_GA_ShockingGrasp::OnMontageCompleted(FGameplayTag EventTag, FGameplayE
 void UACM_GA_ShockingGrasp::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(GetAvatarActorFromActorInfo());
-
+	
 	if (!IsValid(character))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 	}
 
 	if (GetOwningActorFromActorInfo()->GetLocalRole() == ROLE_Authority && EventTag == EnableCollisionTag)
-	{
-		character->MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);					
+	{		
+		FTransform spawnTransform = character->GetMesh()->GetSocketTransform(AbilitySocketName);
+
+		FActorSpawnParameters spawnParams;
+		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		AbsorptionSphere = GetWorld()->SpawnActorDeferred<AACM_AbsorptionSphere>(AbsorptionSphereClass, spawnTransform, character, character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);		
+		AbsorptionSphere->AttachToComponent(character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, AbilitySocketName);
+		AbsorptionSphere->FinishSpawning(spawnTransform);
+				
+		AbsorptionSphere->MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		
 	}
-	
+
 	if (GetOwningActorFromActorInfo()->GetLocalRole() == ROLE_Authority && EventTag == DisableCollisionTag)
-	{
-		character->MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	{	
+		if (IsValid(AbsorptionSphere))
+		{
+			AbsorptionSphere->MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			AbsorptionSphere->Destroy();
+		}
 	}
 }

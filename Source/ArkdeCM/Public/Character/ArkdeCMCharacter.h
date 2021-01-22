@@ -105,23 +105,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay Ability System")
 		UACM_AttributeSet* AttributeSet;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		USphereComponent* MeeleSphereComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particles")
-		UParticleSystemComponent* MeeleParticle;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
-		USoundCue* ShockingGraspSound;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TArray<TSubclassOf<UACM_GameplayAbility>> StartingAbilities;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TArray<TSubclassOf<UGameplayEffect>> StartingEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
-		TSubclassOf<UGameplayEffect> AddHealthEffect;
+	
 
 public:	
 
@@ -135,21 +124,11 @@ public:
 
 	virtual void OnRep_PlayerState() override;
 
-
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Ability System")
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	UFUNCTION()
-		void SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);	
-
-	UFUNCTION()
-		void SphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
+		
 	virtual void Die();
-
-	UFUNCTION(NetMulticast, WithValidation, Reliable)
-		void Multicast_ParticleActivation(bool bIsActive);
-
+	
 
 #pragma endregion
 
