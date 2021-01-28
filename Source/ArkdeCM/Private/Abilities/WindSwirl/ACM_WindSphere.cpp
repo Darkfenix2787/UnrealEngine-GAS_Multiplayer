@@ -4,6 +4,10 @@
 #include "Abilities/WindSwirl/ACM_WindSphere.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Character/ArkdeCMCharacter.h"
+#include "AbilitySystemComponent.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AACM_WindSphere::AACM_WindSphere()
@@ -29,13 +33,42 @@ AACM_WindSphere::AACM_WindSphere()
 void AACM_WindSphere::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AACM_WindSphere::SphereComponentBeginOverlap);
 }
 
-// Called every frame
-void AACM_WindSphere::Tick(float DeltaTime)
+
+void AACM_WindSphere::SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::Tick(DeltaTime);
 
+	if (IsValid(OtherActor) && OtherActor != this->GetOwner())
+	{
+		AArkdeCMCharacter* Character = Cast<AArkdeCMCharacter>(OtherActor);
+
+		if (!IsValid(Character))
+		{
+			return;
+		}
+
+		CharacterAbilitySystemComponent = Character->AbilitySystemComponent;
+		if (GetLocalRole() != ROLE_Authority && !IsValid(CharacterAbilitySystemComponent))
+		{
+			return;
+		}
+
+		FGameplayEffectContextHandle EffectContext = CharacterAbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		if (IsValid(DamageEffect))
+		{
+			FGameplayEffectSpecHandle newDamageHandle = CharacterAbilitySystemComponent->MakeOutgoingSpec(DamageEffect, 1.f, EffectContext);
+			if (newDamageHandle.IsValid())
+			{
+				FActiveGameplayEffectHandle ActiveDamageGEHandle = CharacterAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*newDamageHandle.Data.Get());
+				if (IsValid(WindSwirlSound))
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), WindSwirlSound, this->GetActorLocation());
+				}
+			}
+		}
+	}
 }
-

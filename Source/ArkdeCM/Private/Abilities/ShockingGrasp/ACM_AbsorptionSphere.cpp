@@ -35,49 +35,51 @@ void AACM_AbsorptionSphere::BeginPlay()
 
 void AACM_AbsorptionSphere::SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (IsValid(OtherActor))
-	{		
-		if (OtherActor == this->GetOwner())
+	AActor* OwnerActor = this->GetOwner();
+
+	if (IsValid(OtherActor) && IsValid(OwnerActor) && OtherActor != OwnerActor)
+	{
+		if (ApplyEffect(OtherActor, DamageEffect) && ApplyEffect(OwnerActor, AddHealthEffect))
 		{
-			return;
-		}
-
-		AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(OtherActor);
-		if (IsValid(character))
-		{
-			CharacterAbilitySystemComponent = character->AbilitySystemComponent;
-			if (GetLocalRole() != ROLE_Authority && !IsValid(CharacterAbilitySystemComponent))
-			{
-				return;
-			}
-
-			FGameplayEffectContextHandle effectContext = CharacterAbilitySystemComponent->MakeEffectContext();
-			effectContext.AddSourceObject(this);
-
-			if (IsValid(AddHealthEffect))
-			{
-				FGameplayEffectSpecHandle newHandle = CharacterAbilitySystemComponent->MakeOutgoingSpec(AddHealthEffect, 1.f, effectContext);
-				if (newHandle.IsValid() && IsValid(ShockingGraspSound))
-				{
-					FActiveGameplayEffectHandle ActiveGEHandle = CharacterAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*newHandle.Data.Get());
-					Multicast_ParticleActivation(true);
-				}
-			}
+			Multicast_ParticleActivation(true);
 		}
 	}
 }
 
+bool AACM_AbsorptionSphere::ApplyEffect(AActor* OtherActor, TSubclassOf<UGameplayEffect> EffectApplied)
+{
+	AArkdeCMCharacter* Character = Cast<AArkdeCMCharacter>(OtherActor);
+
+	if (!IsValid(Character) && IsValid(EffectApplied))
+	{
+		return false;
+	}
+
+	CharacterAbilitySystemComponent = Character->AbilitySystemComponent;
+	if (GetLocalRole() != ROLE_Authority && !IsValid(CharacterAbilitySystemComponent))
+	{
+		return false;
+	}
+
+	FGameplayEffectContextHandle EffectContext = CharacterAbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	if (IsValid(EffectApplied))
+	{
+		FGameplayEffectSpecHandle newHandle = CharacterAbilitySystemComponent->MakeOutgoingSpec(EffectApplied, 1.f, EffectContext);
+		if (newHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveDamageGEHandle = CharacterAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*newHandle.Data.Get());
+		}
+	}
+
+	return true;
+}
+
+
 void AACM_AbsorptionSphere::SphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (IsValid(OtherActor))
-	{
-		if (OtherActor == this->GetOwner())
-		{
-			return;
-		}
-
-		Multicast_ParticleActivation(false);
-	}
+	Multicast_ParticleActivation(false);
 }
 
 

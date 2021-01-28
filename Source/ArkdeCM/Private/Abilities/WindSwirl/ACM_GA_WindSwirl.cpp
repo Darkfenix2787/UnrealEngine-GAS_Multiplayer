@@ -61,12 +61,13 @@ void UACM_GA_WindSwirl::EventReceived(FGameplayTag EventTag, FGameplayEventData 
 			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		}	
 
-		FTransform spawnTransform = character->GetActorTransform(); //GetMesh()->GetSocketTransform(AbilitySocketName);
+		FTransform spawnTransform = character->GetActorTransform();
 
 		FActorSpawnParameters spawnParams;
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AACM_WindSphere* windSphere = GetWorld()->SpawnActor<AACM_WindSphere>(WindSphereClass, spawnTransform, spawnParams);
+		AACM_WindSphere* windSphere = GetWorld()->SpawnActorDeferred<AACM_WindSphere>(WindSphereClass, spawnTransform, character, character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);		
+		windSphere->FinishSpawning(spawnTransform);		
 	}
 }
 

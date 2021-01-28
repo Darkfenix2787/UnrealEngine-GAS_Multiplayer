@@ -68,7 +68,7 @@ void UACM_GA_ShockingGrasp::EventReceived(FGameplayTag EventTag, FGameplayEventD
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		
 		AbsorptionSphere = GetWorld()->SpawnActorDeferred<AACM_AbsorptionSphere>(AbsorptionSphereClass, spawnTransform, character, character, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);		
-		AbsorptionSphere->AttachToComponent(character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, AbilitySocketName);
+		AbsorptionSphere->AttachToComponent(character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, AbilitySocketName);			
 		AbsorptionSphere->FinishSpawning(spawnTransform);
 				
 		AbsorptionSphere->MeeleSphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
