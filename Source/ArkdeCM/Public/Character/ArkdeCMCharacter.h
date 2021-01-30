@@ -88,11 +88,13 @@ public:
 
 public:
 
-	bool IsInputBound;
+	bool bIsInputBound;
 
-	bool IsAbilitiesGiven;
+	bool bIsAbilitiesGiven;
 
-	bool IsEffectsGiven;
+	bool bIsEffectsGiven;
+
+	bool bIsDying;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Melee")
 		FName MeleeSocketName;
@@ -126,8 +128,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Ability System")
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-		
-	virtual void Die();
+	
+	UFUNCTION(Server, Reliable)
+		virtual void Server_Die(AArkdeCMCharacter* KillerCharacter);
 	
 
 #pragma endregion

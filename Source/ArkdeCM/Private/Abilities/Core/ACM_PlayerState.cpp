@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/Core/ACM_AttributeSet.h"
 #include "Character/ArkdeCMCharacter.h"
+#include "GameplayEffectExtension.h"
 
 
 //==================================================================================================================//
@@ -17,6 +18,8 @@ AACM_PlayerState::AACM_PlayerState()
 	StateAttributeSet = CreateDefaultSubobject<UACM_AttributeSet>(TEXT("Attribute Set"));
 
 	NetUpdateFrequency = 100.0f;
+
+	KillCount = 0;
 }
 
 //==================================================================================================================//
@@ -75,7 +78,21 @@ void AACM_PlayerState::OnHealthChanged(const FOnAttributeChangeData& Data)
 		AArkdeCMCharacter* characterRef = Cast<AArkdeCMCharacter>(GetPawn());
 		if (IsValid(characterRef))
 		{
-			characterRef->Die();
+			AActor* KillerActor = Data.GEModData->EffectSpec.GetEffectContext().GetEffectCauser();
+			if (IsValid(KillerActor))
+			{
+				AArkdeCMCharacter* KillerCharacter = Cast<AArkdeCMCharacter>(KillerActor);
+				if (IsValid(KillerCharacter))
+				{
+					characterRef->Server_Die(KillerCharacter);
+				}
+			}			
 		}
 	}
+}
+
+//==================================================================================================================//
+void AACM_PlayerState::ScoreKill()
+{
+	KillCount++;
 }

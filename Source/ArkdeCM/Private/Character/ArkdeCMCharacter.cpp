@@ -58,9 +58,10 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	//GAS
-	IsInputBound = false;
-	IsAbilitiesGiven = false;
-	IsEffectsGiven = false;
+	bIsInputBound = false;
+	bIsAbilitiesGiven = false;
+	bIsEffectsGiven = false;
+	bIsDying = false;
 
 }
 
@@ -73,7 +74,7 @@ void AArkdeCMCharacter::BeginPlay()
 //===========================================================================================================================================================//
 void AArkdeCMCharacter::SetUpGasInputs()
 {
-	if (!IsInputBound && IsValid(AbilitySystemComponent) && IsValid(InputComponent))
+	if (!bIsInputBound && IsValid(AbilitySystemComponent) && IsValid(InputComponent))
 	{
 		// Setup ASC Input bindings
 		AbilitySystemComponent->BindAbilityActivationToInputComponent
@@ -88,14 +89,14 @@ void AArkdeCMCharacter::SetUpGasInputs()
 			)
 		);
 
-		IsInputBound = true;
+		bIsInputBound = true;
 	}
 }
 
 //===========================================================================================================================================================//
 void AArkdeCMCharacter::SetUpAbilities()
 {
-	if (GetLocalRole() != ROLE_Authority && !IsValid(AbilitySystemComponent) && IsAbilitiesGiven)
+	if (GetLocalRole() != ROLE_Authority && !IsValid(AbilitySystemComponent) && bIsAbilitiesGiven)
 	{
 		return;
 	}
@@ -110,13 +111,13 @@ void AArkdeCMCharacter::SetUpAbilities()
 		}
 	}
 
-	IsAbilitiesGiven = true;
+	bIsAbilitiesGiven = true;
 }
 
 //===========================================================================================================================================================//
 void AArkdeCMCharacter::SetUpEffects()
 {
-	if (GetLocalRole() != ROLE_Authority && !IsValid(AbilitySystemComponent) && IsEffectsGiven)
+	if (GetLocalRole() != ROLE_Authority && !IsValid(AbilitySystemComponent) && bIsEffectsGiven)
 	{
 		return;
 	}
@@ -135,7 +136,7 @@ void AArkdeCMCharacter::SetUpEffects()
 			}		
 		}
 	}
-	IsEffectsGiven = true;
+	bIsEffectsGiven = true;
 }
 
 //===========================================================================================================================================================
@@ -205,8 +206,23 @@ UAbilitySystemComponent* AArkdeCMCharacter::GetAbilitySystemComponent() const
 }
 
 //===========================================================================================================================================================// 
-void AArkdeCMCharacter::Die()
+void AArkdeCMCharacter::Server_Die_Implementation(AArkdeCMCharacter* KillerCharacter)
 {
+	if (bIsDying)
+	{
+		return;
+	}
+
+	bIsDying = true;
+
+	AACM_PlayerState* KillerPlayerState = Cast<AACM_PlayerState>(KillerCharacter->GetPlayerState());
+
+	if (IsValid(KillerPlayerState))
+	{
+		KillerPlayerState->ScoreKill();
+	}
+
+
 }
 
 //===========================================================================================================================================================

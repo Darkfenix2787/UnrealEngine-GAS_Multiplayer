@@ -38,6 +38,8 @@ public:
 
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);	
 
+	void ScoreKill();
+
 public:
 
 	UPROPERTY()
@@ -47,6 +49,10 @@ public:
 		UACM_AttributeSet* StateAttributeSet;	
 
 	FDelegateHandle HealthChangeDelegateHandle;
+
+public:
+
+	int KillCount;
 
 	
 

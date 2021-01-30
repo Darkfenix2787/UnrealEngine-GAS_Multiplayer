@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameFramework/Controller.h"
 #include "ArkdeCMGameMode.generated.h"
+
 
 UCLASS(minimalapi)
 class AArkdeCMGameMode : public AGameModeBase
@@ -13,6 +15,8 @@ class AArkdeCMGameMode : public AGameModeBase
 
 public:
 	AArkdeCMGameMode();
+
+	void PlayerKiller(AController* VictimController);
 };
 
 
