@@ -23,13 +23,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float CameraSpeed;
+
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<AActor> ViewActorClass;
 	
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void BP_GameConclussion(bool bWasSuccessfull);
+		void BP_GameConclussion(bool bWasSuccessful);
 
 	void GameConclussion(bool bWasSuccessfull);
+
+	virtual void OnPossess(APawn* aPawn) override;
 
 	
 };

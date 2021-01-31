@@ -18,7 +18,7 @@ AArkdeCMGameMode::AArkdeCMGameMode()
 }
 
 //==================================================================================================================//
-void AArkdeCMGameMode::PlayerKiller(AController* VictimController)
+void AArkdeCMGameMode::PlayerKilled(AController* VictimController)
 {
 	AACM_PlayerController* ArkdeVictimController = Cast<AACM_PlayerController>(VictimController);
 	if (IsValid(ArkdeVictimController))
@@ -30,6 +30,6 @@ void AArkdeCMGameMode::PlayerKiller(AController* VictimController)
 
 	if (IsValid(WorldGameState))
 	{
-
+		WorldGameState->CheckWinCondition();
 	}
 }

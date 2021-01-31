@@ -14,6 +14,7 @@ class UGameplayEffect;
 class USphereComponent;
 class UParticleSystemComponent;
 class USoundCue;
+class UAnimMontage;
 
 UCLASS(config=Game)
 class AArkdeCMCharacter : public ACharacter, public IAbilitySystemInterface
@@ -112,6 +113,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TArray<TSubclassOf<UGameplayEffect>> StartingEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
+		TSubclassOf<UGameplayEffect> DeathEffectClass;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		UAnimMontage* DeathMontage;
+
 	
 
 public:	
@@ -131,6 +139,9 @@ public:
 	
 	UFUNCTION(Server, Reliable)
 		virtual void Server_Die(AArkdeCMCharacter* KillerCharacter);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastOnDeath();
 	
 
 #pragma endregion

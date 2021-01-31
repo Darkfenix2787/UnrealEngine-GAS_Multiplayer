@@ -17,6 +17,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "ArkdeCM/ArkdeCMGameMode.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // AArkdeCMCharacter
@@ -215,6 +217,12 @@ void AArkdeCMCharacter::Server_Die_Implementation(AArkdeCMCharacter* KillerChara
 
 	bIsDying = true;
 
+	if (IsValid(DeathEffectClass))
+	{
+		FGameplayEffectContextHandle EffectContest;
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(DeathEffectClass->GetDefaultObject<UGameplayEffect>(), 1.f, EffectContest);
+	}
+
 	AACM_PlayerState* KillerPlayerState = Cast<AACM_PlayerState>(KillerCharacter->GetPlayerState());
 
 	if (IsValid(KillerPlayerState))
@@ -222,6 +230,24 @@ void AArkdeCMCharacter::Server_Die_Implementation(AArkdeCMCharacter* KillerChara
 		KillerPlayerState->ScoreKill();
 	}
 
+	AArkdeCMGameMode* WorldGameMode = Cast<AArkdeCMGameMode>(GetWorld()->GetAuthGameMode());
+	WorldGameMode->PlayerKilled(GetController());
+
+	MulticastOnDeath();
+}
+
+
+//===========================================================================================================================================================// 
+void AArkdeCMCharacter::MulticastOnDeath_Implementation()
+{
+	if (DeathMontage)
+	{
+		PlayAnimMontage(DeathMontage);
+	}
+	else
+	{
+		Destroy();
+	}
 
 }
 

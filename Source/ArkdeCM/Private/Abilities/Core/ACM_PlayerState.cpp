@@ -73,7 +73,7 @@ void AACM_PlayerState::BeginPlay()
 //==================================================================================================================//
 void AACM_PlayerState::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (!IsAlive() && IsValid(AbilitySystemComponent))
+	if (!IsAlive() && IsValid(AbilitySystemComponent) && GetLocalRole() == ROLE_Authority)
 	{		
 		AArkdeCMCharacter* characterRef = Cast<AArkdeCMCharacter>(GetPawn());
 		if (IsValid(characterRef))
