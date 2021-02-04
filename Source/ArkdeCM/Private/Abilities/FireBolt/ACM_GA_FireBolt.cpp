@@ -80,7 +80,6 @@ void UACM_GA_FireBolt::EventReceived(FGameplayTag EventTag, FGameplayEventData E
 		fireBolt->Range = ProjectileRange;
 		fireBolt->SetProjectileInitialSpeed(ProjectileSpeed);
 		fireBolt->FinishSpawning(spawnTransform);
-
 	}
 }
 
