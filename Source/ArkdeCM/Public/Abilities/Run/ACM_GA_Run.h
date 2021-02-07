@@ -6,9 +6,6 @@
 #include "Abilities/Core/ACM_GameplayAbility.h"
 #include "ACM_GA_Run.generated.h"
 
-
-class UAbilityTask_WaitDelay;
-
 UCLASS()
 class ARKDECM_API UACM_GA_Run : public UACM_GameplayAbility
 {
@@ -22,11 +19,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Variable")
 		int AbilityWalkSpeed;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay Ability System")
+		FGameplayTag StaminaRegenEffectTag;
+
 	int CurrentWalkSpeed;
 
-	FTimerHandle TimerHandle_Ability;
+	
 
-	UAbilityTask_WaitDelay* DelayDelegate;
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
+		TSubclassOf<UGameplayEffect> StaminaCostEffect;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay Ability System")
+		UAbilitySystemComponent* CharacterAbilitySystemComponent;	
 
 public:
 
@@ -35,9 +41,5 @@ public:
 
 public:
 
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
-	UFUNCTION()
-		void NormalizeSpeed();
-	
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;		
 };

@@ -28,6 +28,11 @@ bool AACM_PlayerState::IsAlive() const
 	return GetHealth() > 0.f;
 }
 
+bool AACM_PlayerState::IsRuning() const
+{
+	return GetStamina() > 0.f;
+}
+
 //==================================================================================================================//
 float AACM_PlayerState::GetHealth() const
 {
@@ -44,6 +49,11 @@ float AACM_PlayerState::GetMaxHealth() const
 float AACM_PlayerState::GetHealthRegen() const
 {
 	return GetAttributeSet()->GetHealthRegen();
+}
+
+float AACM_PlayerState::GetStamina() const
+{
+	return GetAttributeSet()->GetStamina();
 }
 
 //==================================================================================================================//
@@ -67,6 +77,7 @@ void AACM_PlayerState::BeginPlay()
 	{		
 		//CallBack Attribute Change
 		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetAttributeSet()->GetHealthAttribute()).AddUObject(this, &AACM_PlayerState::OnHealthChanged);
+		StaminaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetAttributeSet()->GetStaminaAttribute()).AddUObject(this, &AACM_PlayerState::OnStaminaChanged);
 	}
 }
 
@@ -87,6 +98,19 @@ void AACM_PlayerState::OnHealthChanged(const FOnAttributeChangeData& Data)
 					characterRef->Server_Die(KillerCharacter);
 				}
 			}			
+		}
+	}
+}
+
+//==================================================================================================================//
+void AACM_PlayerState::OnStaminaChanged(const FOnAttributeChangeData& Data)
+{
+	if (!IsRuning() && IsValid(AbilitySystemComponent) && GetLocalRole() == ROLE_Authority)
+	{
+		AArkdeCMCharacter* characterRef = Cast<AArkdeCMCharacter>(GetPawn());
+		if (IsValid(characterRef))
+		{
+			characterRef->NormalizeSpeed();
 		}
 	}
 }

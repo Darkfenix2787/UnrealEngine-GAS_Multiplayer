@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayEffect.h"
 #include "ArkdeCMCharacter.generated.h"
+
 
 class UAbilitySystemComponent;
 class UACM_AttributeSet;
@@ -97,6 +99,8 @@ public:
 
 	bool bIsDying;
 
+	int CurrentWalkSpeed;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Melee")
 		FName MeleeSocketName;
 
@@ -116,6 +120,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
 		TSubclassOf<UGameplayEffect> DeathEffectClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Ability System")
+		TSubclassOf<UGameplayEffect> StaminaRegenEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay Ability System")
+		FGameplayTag StaminaCostEffectTag;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 		UAnimMontage* DeathMontage;
@@ -142,6 +152,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void MulticastOnDeath();
+
+	void NormalizeSpeed();
 	
 
 #pragma endregion

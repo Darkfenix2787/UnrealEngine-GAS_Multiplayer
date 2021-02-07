@@ -4,6 +4,7 @@
 #include "Character/ArkdeCMCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "AbilitySystemComponent.h"
 
 
 //===========================================================================================================================================================//
@@ -11,7 +12,7 @@ UACM_GA_Run::UACM_GA_Run()
 {
 	AbilityDuration = 5.f;
 	CurrentWalkSpeed = 0;
-	AbilityWalkSpeed = 2000;
+	AbilityWalkSpeed = 2000;	
 }
 
 
@@ -33,33 +34,36 @@ void UACM_GA_Run::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 		}
 
 		CurrentWalkSpeed = character->GetCharacterMovement()->MaxWalkSpeed;
-		character->GetCharacterMovement()->MaxWalkSpeed = AbilityWalkSpeed;
+		CharacterAbilitySystemComponent = character->AbilitySystemComponent;
 
-
-		DelayDelegate = UAbilityTask_WaitDelay::WaitDelay(this, AbilityDuration);
-		DelayDelegate->OnFinish.AddDynamic(this, &UACM_GA_Run::NormalizeSpeed);
-		DelayDelegate->Activate();
-		
-		//GetWorld()->GetTimerManager().SetTimer(TimerHandle_Ability, this, &UACM_GA_Run::NormalizeSpeed, AbilityDuration, false);
-	}
-}
-	
-	//===========================================================================================================================================================//
-void UACM_GA_Run::NormalizeSpeed()
-{	
-	if (GetOwningActorFromActorInfo()->GetLocalRole() == ROLE_Authority)
-	{
-		AArkdeCMCharacter* character = Cast<AArkdeCMCharacter>(GetAvatarActorFromActorInfo());
-
-		if (!IsValid(character))
+		if (IsValid(CharacterAbilitySystemComponent))
 		{
-			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+			if (CurrentWalkSpeed == AbilityWalkSpeed)
+			{
+				character->NormalizeSpeed();
+			}
+			else
+			{
+				character->GetCharacterMovement()->MaxWalkSpeed = AbilityWalkSpeed;
+
+				FGameplayEffectContextHandle EffectContext = CharacterAbilitySystemComponent->MakeEffectContext();
+				EffectContext.AddSourceObject(this);
+
+				if (IsValid(StaminaCostEffect) && StaminaRegenEffectTag.IsValid())
+				{
+					FGameplayEffectSpecHandle newHandle = CharacterAbilitySystemComponent->MakeOutgoingSpec(StaminaCostEffect, 1.f, EffectContext);
+					if (newHandle.IsValid())
+					{
+						FActiveGameplayEffectHandle ActiveGEHandle = CharacterAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*newHandle.Data.Get());	
+
+						FGameplayTagContainer EffectTagsToRemove;
+						EffectTagsToRemove.AddTag(StaminaRegenEffectTag);
+						CharacterAbilitySystemComponent->RemoveActiveEffectsWithAppliedTags(EffectTagsToRemove);
+					}
+				}
+			}
 		}
 
-		character->GetCharacterMovement()->MaxWalkSpeed = CurrentWalkSpeed;
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Ability);		
-		DelayDelegate->EndTask();
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 	}
-
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

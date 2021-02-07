@@ -24,11 +24,15 @@ public:
 
 	bool IsAlive() const;
 
+	bool IsRuning() const;
+
 	float GetHealth() const;
 
 	float GetMaxHealth() const;
 
 	float GetHealthRegen() const;
+
+	float GetStamina() const;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 
@@ -37,6 +41,8 @@ public:
 	virtual void BeginPlay() override;	
 
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);	
+
+	virtual void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
 	void ScoreKill();
 
@@ -49,6 +55,8 @@ public:
 		UACM_AttributeSet* StateAttributeSet;	
 
 	FDelegateHandle HealthChangeDelegateHandle;
+
+	FDelegateHandle StaminaChangeDelegateHandle;
 
 public:
 

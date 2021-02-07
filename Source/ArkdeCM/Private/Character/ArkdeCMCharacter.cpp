@@ -64,6 +64,7 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 	bIsAbilitiesGiven = false;
 	bIsEffectsGiven = false;
 	bIsDying = false;
+	CurrentWalkSpeed = 0;
 
 }
 
@@ -71,6 +72,7 @@ AArkdeCMCharacter::AArkdeCMCharacter()
 void AArkdeCMCharacter::BeginPlay()
 {
 	Super::BeginPlay();		
+	CurrentWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
 //===========================================================================================================================================================//
@@ -208,6 +210,20 @@ UAbilitySystemComponent* AArkdeCMCharacter::GetAbilitySystemComponent() const
 }
 
 //===========================================================================================================================================================// 
+void AArkdeCMCharacter::NormalizeSpeed()
+{
+	if (StaminaCostEffectTag.IsValid() && IsValid(StaminaRegenEffectClass) && IsValid(AbilitySystemComponent))
+	{
+		GetCharacterMovement()->MaxWalkSpeed = CurrentWalkSpeed;
+		FGameplayTagContainer EffectTagsToRemove;
+		EffectTagsToRemove.AddTag(StaminaCostEffectTag);
+		AbilitySystemComponent->RemoveActiveEffectsWithAppliedTags(EffectTagsToRemove);
+		FGameplayEffectContextHandle EffectContext;
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(StaminaRegenEffectClass->GetDefaultObject<UGameplayEffect>(), 1.f, EffectContext);
+	}	
+}
+
+//===========================================================================================================================================================// 
 void AArkdeCMCharacter::Server_Die_Implementation(AArkdeCMCharacter* KillerCharacter)
 {
 	if (bIsDying)
@@ -219,8 +235,8 @@ void AArkdeCMCharacter::Server_Die_Implementation(AArkdeCMCharacter* KillerChara
 
 	if (IsValid(DeathEffectClass))
 	{
-		FGameplayEffectContextHandle EffectContest;
-		AbilitySystemComponent->ApplyGameplayEffectToSelf(DeathEffectClass->GetDefaultObject<UGameplayEffect>(), 1.f, EffectContest);
+		FGameplayEffectContextHandle EffectContext;
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(DeathEffectClass->GetDefaultObject<UGameplayEffect>(), 1.f, EffectContext);
 	}
 
 	AACM_PlayerState* KillerPlayerState = Cast<AACM_PlayerState>(KillerCharacter->GetPlayerState());
