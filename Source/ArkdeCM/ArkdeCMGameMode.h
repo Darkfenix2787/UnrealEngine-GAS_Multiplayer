@@ -7,6 +7,8 @@
 #include "GameFramework/Controller.h"
 #include "ArkdeCMGameMode.generated.h"
 
+class APlayerStart;
+class AACM_Collectable;
 
 UCLASS(minimalapi)
 class AArkdeCMGameMode : public AGameModeBase
@@ -16,7 +18,24 @@ class AArkdeCMGameMode : public AGameModeBase
 public:
 	AArkdeCMGameMode();
 
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
 	void PlayerKilled(AController* VictimController);
+
+	void InitPlayerStarts();
+
+	void SetupWorldSpawners();
+
+protected:
+
+	virtual void BeginPlay() override;	
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		TArray<TSubclassOf<AACM_Collectable>> SpawnableCollectables;
+
+	TArray<APlayerStart*> WorldPlayerStarts;
 };
 
 

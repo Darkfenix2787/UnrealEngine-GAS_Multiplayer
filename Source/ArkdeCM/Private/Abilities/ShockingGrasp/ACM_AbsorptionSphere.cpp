@@ -9,7 +9,7 @@
 #include "Character/ArkdeCMCharacter.h"
 #include "AbilitySystemComponent.h"
 
-
+//===========================================================================================================================================================// 
 // Sets default values
 AACM_AbsorptionSphere::AACM_AbsorptionSphere()
 {
@@ -25,6 +25,7 @@ AACM_AbsorptionSphere::AACM_AbsorptionSphere()
 	MeeleParticle->SetupAttachment(MeeleSphereComponent);
 }
 
+//===========================================================================================================================================================// 
 // Called when the game starts or when spawned
 void AACM_AbsorptionSphere::BeginPlay()
 {
@@ -33,6 +34,7 @@ void AACM_AbsorptionSphere::BeginPlay()
 	MeeleSphereComponent->OnComponentEndOverlap.AddDynamic(this, &AACM_AbsorptionSphere::SphereComponentEndOverlap);
 }
 
+//===========================================================================================================================================================// 
 void AACM_AbsorptionSphere::SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AActor* OwnerActor = this->GetOwner();
@@ -46,6 +48,7 @@ void AACM_AbsorptionSphere::SphereComponentBeginOverlap(UPrimitiveComponent* Ove
 	}
 }
 
+//===========================================================================================================================================================// 
 bool AACM_AbsorptionSphere::ApplyEffect(AActor* OtherActor, TSubclassOf<UGameplayEffect> EffectApplied)
 {
 	AArkdeCMCharacter* Character = Cast<AArkdeCMCharacter>(OtherActor);
@@ -76,13 +79,13 @@ bool AACM_AbsorptionSphere::ApplyEffect(AActor* OtherActor, TSubclassOf<UGamepla
 	return true;
 }
 
-
+//===========================================================================================================================================================// 
 void AACM_AbsorptionSphere::SphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Multicast_ParticleActivation(false);
 }
 
-
+//===========================================================================================================================================================// 
 void AACM_AbsorptionSphere::Multicast_ParticleActivation_Implementation(bool bIsActive)
 {
 	if (IsValid(MeeleParticle) && IsValid(ShockingGraspSound))

@@ -10,8 +10,7 @@
 //===========================================================================================================================================================//
 UACM_GA_Run::UACM_GA_Run()
 {
-	AbilityDuration = 5.f;
-	CurrentWalkSpeed = 0;
+	AbilityDuration = 5.f;	
 	AbilityWalkSpeed = 2000;	
 }
 
@@ -33,7 +32,7 @@ void UACM_GA_Run::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		}
 
-		CurrentWalkSpeed = character->GetCharacterMovement()->MaxWalkSpeed;
+		int CurrentWalkSpeed = character->GetCharacterMovement()->MaxWalkSpeed;
 		CharacterAbilitySystemComponent = character->AbilitySystemComponent;
 
 		if (IsValid(CharacterAbilitySystemComponent))

@@ -13,18 +13,14 @@ class ARKDECM_API UACM_GA_Run : public UACM_GameplayAbility
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Variable")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay Ability System")
 		float AbilityDuration;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Variable")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay Ability System")
 		int AbilityWalkSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay Ability System")
-		FGameplayTag StaminaRegenEffectTag;
-
-	int CurrentWalkSpeed;
-
-	
+		FGameplayTag StaminaRegenEffectTag;	
 
 protected:
 

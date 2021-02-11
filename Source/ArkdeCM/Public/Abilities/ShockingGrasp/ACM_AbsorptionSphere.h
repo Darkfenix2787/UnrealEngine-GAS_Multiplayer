@@ -33,6 +33,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay Ability System")
 		UAbilitySystemComponent* CharacterAbilitySystemComponent;
 
+public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
 		USoundCue* ShockingGraspSound;
 
@@ -46,15 +48,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-
-	bool ApplyEffect(AActor* OtherActor, TSubclassOf<UGameplayEffect> EffectApplied);
-
 	UFUNCTION()
-		void SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);	
+		void SphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 		void SphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+public:	
+
+	bool ApplyEffect(AActor* OtherActor, TSubclassOf<UGameplayEffect> EffectApplied);	
 
 	UFUNCTION(NetMulticast, WithValidation, Reliable)
 		void Multicast_ParticleActivation(bool bIsActive);
