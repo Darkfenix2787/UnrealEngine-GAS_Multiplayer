@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
+#include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/OnlineSessionSettings.h"
+#include "D:/Programs/Epic Games/UE_4.25/Engine/Source/Runtime/Core/Public/Templates/SharedPointer.h"
+#include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
 #include "ACM_GameInstance.generated.h"
 
 
@@ -20,6 +23,9 @@ class ARKDECM_API UACM_GameInstance : public UGameInstance
 public:
 
 	IOnlineSessionPtr SessionInterface;
+
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+
 	FName SessionDefaultName = TEXT("SessionName");
 
 public:
@@ -29,6 +35,10 @@ public:
 	void OnSessionCreated(FName SessionName, bool Success);
 
 	void OnSessionDestroyed(FName SessionName, bool Success);
+
+	void OnSessionFound(bool Success);
+
+	void OnSessionJoined(FName SessionName, EOnJoinSessionCompleteResult::Type JoinResult);
 
 	UFUNCTION(BlueprintCallable)
 		void Host();
