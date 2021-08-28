@@ -1,0 +1,1 @@
+"D:\Programs\Epic Games\UE_4.25\Engine\Binaries\Win64\UE4Editor.exe" "C:\Users\fenix\Documents\Arkade Multiplayer UE4\ArkdeCM.uproject" -game -log -WINDOWED -ResX=720 -ResY=480

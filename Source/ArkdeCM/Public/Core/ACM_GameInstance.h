@@ -40,8 +40,10 @@ public:
 
 	void OnSessionJoined(FName SessionName, EOnJoinSessionCompleteResult::Type JoinResult);
 
+	void CreateSessionSettings();
+
 	UFUNCTION(BlueprintCallable)
-		void Host();
+		void Host();	
 
 	UFUNCTION(BlueprintCallable)
 		void Join();
