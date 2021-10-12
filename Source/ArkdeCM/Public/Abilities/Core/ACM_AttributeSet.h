@@ -14,6 +14,8 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnResourceChanged, float, CurrentValue, float, MaxValue);
+
 UCLASS()
 class ARKDECM_API UACM_AttributeSet : public UAttributeSet
 {
@@ -70,6 +72,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Stamina", ReplicatedUsing = OnRep_StaminaRegen)
 		FGameplayAttributeData StaminaRegen;
 	ATTRIBUTE_ACCESSORS(UACM_AttributeSet, StaminaRegen);
+
+	FOnResourceChanged OnHealthChangedDelegate;
+
+	FOnResourceChanged OnManaChangedDelegate;
+
+	FOnResourceChanged OnStaminaChangedDelegate;
 
 
 public:

@@ -154,6 +154,9 @@ void AArkdeCMCharacter::PossessedBy(AController* NewController)
 		AbilitySystemComponent = playerState->GetAbilitySystemComponent();
 		AbilitySystemComponent->InitAbilityActorInfo(playerState, this);
 		AttributeSet = playerState->GetAttributeSet();
+		AttributeSet->OnHealthChangedDelegate.AddDynamic(this, &AArkdeCMCharacter::OnCharacterHealthChanged);
+		AttributeSet->OnManaChangedDelegate.AddDynamic(this, &AArkdeCMCharacter::OnCharacterManaChanged);
+		AttributeSet->OnStaminaChangedDelegate.AddDynamic(this, &AArkdeCMCharacter::OnCharacterStaminaChanged);
 
 		SetUpAbilities();
 		SetUpEffects();
@@ -171,6 +174,9 @@ void AArkdeCMCharacter::OnRep_PlayerState()
 		AbilitySystemComponent = playerState->GetAbilitySystemComponent();
 		AbilitySystemComponent->InitAbilityActorInfo(playerState, this);
 		AttributeSet = playerState->GetAttributeSet();
+		AttributeSet->OnHealthChangedDelegate.AddDynamic(this, &AArkdeCMCharacter::OnCharacterHealthChanged);
+		AttributeSet->OnManaChangedDelegate.AddDynamic(this, &AArkdeCMCharacter::OnCharacterManaChanged);
+		AttributeSet->OnStaminaChangedDelegate.AddDynamic(this, &AArkdeCMCharacter::OnCharacterStaminaChanged);
 
 		SetUpGasInputs();
 	}
@@ -283,6 +289,42 @@ void AArkdeCMCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Loca
 void AArkdeCMCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 		StopJumping();
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::OnCharacterHealthChanged(float Health, float MaxHealth)
+{
+	Client_HealthChanged(Health, MaxHealth);
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::Client_HealthChanged_Implementation(float Health, float MaxHealth)
+{
+	OnCharacterHealthDelegate.Broadcast(Health / MaxHealth);
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::OnCharacterManaChanged(float Mana, float MaxMana)
+{
+	Client_ManaChanged(Mana, MaxMana);
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::Client_ManaChanged_Implementation(float Mana, float MaxMana)
+{
+	OnCharacterManaDelegate.Broadcast(Mana / MaxMana);
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::OnCharacterStaminaChanged(float Stamina, float MaxStamina)
+{
+	Client_StaminaChanged(Stamina, MaxStamina);
+}
+
+//===========================================================================================================================================================
+void AArkdeCMCharacter::Client_StaminaChanged_Implementation(float Stamina, float MaxStamina)
+{
+	OnCharacterStaminaDelegate.Broadcast(Stamina / MaxStamina);
 }
 
 //===========================================================================================================================================================

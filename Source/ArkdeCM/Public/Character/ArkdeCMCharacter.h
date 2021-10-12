@@ -18,6 +18,8 @@ class UParticleSystemComponent;
 class USoundCue;
 class UAnimMontage;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnResourceCharacterChanged, float, PercentValue);
+
 UCLASS(config=Game)
 class AArkdeCMCharacter : public ACharacter, public IAbilitySystemInterface
 {
@@ -72,6 +74,35 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnResourceCharacterChanged OnCharacterHealthDelegate;
+	
+	UFUNCTION()
+	void OnCharacterHealthChanged(float Health, float MaxHealth);
+
+	UFUNCTION(Client, Reliable)
+	void Client_HealthChanged(float Health, float MaxHealth);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnResourceCharacterChanged OnCharacterManaDelegate;
+
+	UFUNCTION()
+	void OnCharacterManaChanged(float Mana, float MaxMana);
+
+	UFUNCTION(Client, Reliable)
+	void Client_ManaChanged(float Mana, float MaxMana);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnResourceCharacterChanged OnCharacterStaminaDelegate;
+
+	UFUNCTION()
+	void OnCharacterStaminaChanged(float Stamina, float MaxStamina);
+
+	UFUNCTION(Client, Reliable)
+	void Client_StaminaChanged(float Stamina, float MaxStamina);
+
+
 
 protected:
 	// APawn interface

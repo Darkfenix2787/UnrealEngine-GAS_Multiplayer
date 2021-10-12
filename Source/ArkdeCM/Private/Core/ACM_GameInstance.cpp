@@ -6,7 +6,6 @@
 #include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/OnlineSessionSettings.h"
 #include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
 
-//===========================================================================================================================================================//
 void UACM_GameInstance::Init()
 {
 	Super::Init();
@@ -26,7 +25,6 @@ void UACM_GameInstance::Init()
 	}	
 }
 
-//===========================================================================================================================================================//
 void UACM_GameInstance::Host()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::Host Create session start"));
@@ -38,31 +36,24 @@ void UACM_GameInstance::Host()
 	}
 	else
 	{
-		CreateSessionSettings();
+		FOnlineSessionSettings SessionSettings;
+		SessionSettings.bIsLANMatch = true;
+		SessionSettings.bShouldAdvertise = true;
+		SessionSettings.NumPublicConnections = 2;
+		SessionInterface->CreateSession(0, SessionDefaultName, SessionSettings);
 	}		
 }
 
-//===========================================================================================================================================================//
 void UACM_GameInstance::Join()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::Join Find Sessions Start"));
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-
-	if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
-	{
-		SessionSearch->bIsLanQuery = true;
-	}
-	else
-	{
-		SessionSearch->bIsLanQuery = false;
-	}
-
 	SessionSearch->MaxSearchResults = 100;
-	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	SessionSearch->bIsLanQuery = true;
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
-//===========================================================================================================================================================//
+
 void UACM_GameInstance::OnSessionCreated(FName SessionName, bool Success)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::OnSessionCreated Create session end"));
@@ -74,10 +65,9 @@ void UACM_GameInstance::OnSessionCreated(FName SessionName, bool Success)
 
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::OnSessionCreated Create session success"));
 	UWorld* GameWorld = GetWorld();
-	GameWorld->ServerTravel("/Game/Maps/LobbyMap?listen");
+	GameWorld->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
 
-//===========================================================================================================================================================//
 void UACM_GameInstance::OnSessionDestroyed(FName SessionName, bool Success)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::OnSessionDestroyed Destroy session end"));
@@ -88,11 +78,13 @@ void UACM_GameInstance::OnSessionDestroyed(FName SessionName, bool Success)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::OnSessionDestroyed Destroy session success"));
-	
-	CreateSessionSettings();
+	FOnlineSessionSettings SessionSettings;
+	SessionSettings.bIsLANMatch = true;
+	SessionSettings.bShouldAdvertise = true;
+	SessionSettings.NumPublicConnections = 2;
+	SessionInterface->CreateSession(0, SessionName, SessionSettings);
 }
 
-//===========================================================================================================================================================//
 void UACM_GameInstance::OnSessionFound(bool Success)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::OnSessionFound Find Sessions end"));
@@ -118,7 +110,6 @@ void UACM_GameInstance::OnSessionFound(bool Success)
 	}
 }
 
-//===========================================================================================================================================================//
 void UACM_GameInstance::OnSessionJoined(FName SessionName, EOnJoinSessionCompleteResult::Type JoinResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UACM_GameInstance::OnSessionJoined Join Session End"));
@@ -137,26 +128,4 @@ void UACM_GameInstance::OnSessionJoined(FName SessionName, EOnJoinSessionComplet
 		return;
 	}
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
-}
-
-//===========================================================================================================================================================//
-void UACM_GameInstance::CreateSessionSettings()
-{
-	FOnlineSessionSettings SessionSettings;
-
-	if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
-	{
-		SessionSettings.bIsLANMatch = true;
-	}
-	else
-	{
-		SessionSettings.bIsLANMatch = false;
-	}
-
-	SessionSettings.bShouldAdvertise = true;
-	SessionSettings.bUsesPresence = true;
-	SessionSettings.bAllowJoinInProgress = true;
-	SessionSettings.NumPublicConnections = 2;
-	SessionSettings.Set(TEXT("ServerName"), FString(TEXT("ArkdeBattleRoyale")), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-	SessionInterface->CreateSession(0, SessionDefaultName, SessionSettings);
 }
