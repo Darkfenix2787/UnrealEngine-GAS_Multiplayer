@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/OnlineSubsystem.h"
-#include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/OnlineSessionSettings.h"
-#include "D:/Programs/Epic Games/UE_4.25/Engine/Source/Runtime/Core/Public/Templates/SharedPointer.h"
-#include "D:/Programs/Epic Games/UE_4.25/Engine/Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
+#include "OnlineSubsystem.h"
+#include "OnlineSessionSettings.h"
+#include "Templates/SharedPointer.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "ACM_GameInstance.generated.h"
 
 
